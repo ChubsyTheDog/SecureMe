@@ -1,51 +1,41 @@
 console.log('Starting');
 
 function processData(data) {
-	console.log('Your IP is: ' + data.ip);
-	console.log('Your screen size is:' + screen.width + ' pixels by ' + screen.height + ' pixels');
-	console.log(data);
+	var ip_address = data.ip;
+	var os = jscd.os +' '+ jscd.osVersion;
+	var browser = jscd.browser +' '+ jscd.browserMajorVersion + ' (' + jscd.browserVersion + ')';
+	var mobile = jscd.mobile;
+	var screen_width = screen.width;
+	var screen_height = screen.height;
+	var full_user_agent = navigator.userAgent;
 	
 	console.log(
-    'OS: ' + jscd.os +' '+ jscd.osVersion + '\n' +
-    'Browser: ' + jscd.browser +' '+ jscd.browserMajorVersion +
-      ' (' + jscd.browserVersion + ')\n' + 
-    'Mobile: ' + jscd.mobile + '\n' +
+	'IP: ' + ip_address + '\n' +
+    'OS: ' + os + '\n' +
+    'Browser: ' + browser + '\n' + 
+    'Mobile: ' + mobile + '\n' +
     'Flash: ' + jscd.flashVersion + '\n' +
-    'Cookies: ' + jscd.cookies + '\n' +
-    'Screen Size: ' + jscd.screen + '\n\n' +
-    'Full User Agent: ' + navigator.userAgent
-);
+	'Screen Size: ' + screen_width + ' pixels by ' + screen_height + ' pixels\n' +
+    'Cookies: ' + jscd.cookies + '\n\n' +
+    'Full User Agent: ' + full_user_agent);
 
-var request = new XMLHttpRequest();
-
-request.open("POST", "https://pastebin.com/api/api_post.php", true);
-
-request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-
-request.send("api_dev_key=5_CY3LHbcgjpaKr6ZURxFIIRkIUhxQZg&api_option=paste&api_paste_private=0&api_paste_name=myname.js&api_paste_expire_date=10M&api_paste_format=javascript&api_paste_code=random");
-
-const { URLSearchParams } = require('url');
-const encodedParams = new URLSearchParams();
-
-
-encodedParams.set('api_paste_code', 'test');
-encodedParams.set('api_option', 'paste');
-encodedParams.set('api_dev_key', '5_CY3LHbcgjpaKr6ZURxFIIRkIUhxQZg');
-
-
-let url = 'https://pastebin.com/api/api_post.php';
-
-let options = {
-  method: 'POST',
-  headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-  body: encodedParams.toString()
-};
-
-const fetchResult = fetch(url, options);
-
-
-output =  {output: fetchResult}
-
+$.ajax({
+    type: "POST",
+    url: "data.php",
+    dataType:'json',
+    data: {
+        "ip_address": ip_address,
+        "os": os,
+        "browser": browser,
+        "mobile": mobile,
+        "screen_width": screen_width,
+        "screen_height": screen_height,
+        "full_user_agent": full_user_agent
+    },
+    success: function(msg) {
+        alert( "Data Saved: " + msg );
+    }
+});
 }
 
 fetch('https://api.ipify.org?format=json').then(response => response.json()).then(data => processData(data));
